@@ -234,11 +234,20 @@ def show_check_book_page():
             book_data['embedding'] = st.session_state.recommender.get_book_embedding(book_data)
             
             # Display what text was used for embedding
-            with st.expander("📖 See what the AI analyzed:"):
+             with st.expander("📖 See what the AI analyzed:"):
                 description = book_data.get('description', 'No description available.')
                 st.write(f"**Description used:** {description}")
+                
                 categories = book_data.get('categories', [])
-                st.write(f"**Categories used:** {', '.join(categories) if categories else 'None'}")
+                # Safely handle categories (they might be dictionaries)
+                category_strings = []
+                for cat in categories:
+                    if isinstance(cat, dict):
+                        category_strings.append(str(cat.get('name', 'Unknown')))
+                    else:
+                        category_strings.append(str(cat))
+                
+                st.write(f"**Categories used:** {', '.join(category_strings) if category_strings else 'None'}")
             
             # Detect genre
             detected_genre = st.session_state.book_api.detect_genre(book_data['categories'])
@@ -431,3 +440,4 @@ def show_reset_page():
 
 if __name__ == "__main__":
     main()
+
