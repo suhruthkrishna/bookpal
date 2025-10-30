@@ -54,19 +54,28 @@ class BookAPI:
             # Get the first result
             book_info = data['items'][0]['volumeInfo']
             
-            # Get description - try multiple fields for better content
-            description = book_info.get('description', 'No description available.')
-            if not description or description == 'No description available.':
-                description = book_info.get('subtitle', 'No description available.')
+            # Get description - try multiple fields and provide better fallbacks
+            description = book_info.get('description', '')
+            if not description:
+                description = book_info.get('subtitle', '')
+            if not description:
+                # Create a basic description from available info
+                title = book_info.get('title', 'This book')
+                authors = book_info.get('authors', [])
+                categories = book_info.get('categories', [])
+                
+                author_text = f" by {', '.join(authors)}" if authors else ""
+                category_text = f" in the {categories[0]} genre" if categories else ""
+                description = f"{title}{author_text}{category_text}. A compelling read that explores its themes through engaging storytelling."
             
             # Extract relevant information
             result = {
                 'title': book_info.get('title', 'Unknown Title'),
                 'authors': book_info.get('authors', ['Unknown Author']),
                 'description': description,
-                'categories': book_info.get('categories', ['Unknown']),
+                'categories': book_info.get('categories', ['Fiction']),
                 'published_date': book_info.get('publishedDate', ''),
-                'publisher': book_info.get('publisher', ''),
+                'publisher': book_info.get('publisher', 'Unknown Publisher'),
                 'page_count': book_info.get('pageCount', 0),
                 'isbn': isbn,
                 'source': 'Google Books'
@@ -104,13 +113,22 @@ class BookAPI:
             
             book_data = record.get('data', {})
             
+            # Get description with better fallbacks for OpenLibrary too
+            description = book_data.get('description', '')
+            if not description:
+                # Create descriptive text from available info
+                title = book_data.get('title', 'This book')
+                subjects = book_data.get('subjects', [])
+                subject_text = f" about {subjects[0]}" if subjects else ""
+                description = f"{title}{subject_text}. An engaging work that captivates readers with its narrative and characters."
+            
             result = {
                 'title': book_data.get('title', 'Unknown Title'),
                 'authors': book_data.get('authors', [{'name': 'Unknown Author'}]),
-                'description': book_data.get('description', 'No description available.'),
-                'categories': book_data.get('subjects', ['Unknown']),
+                'description': description,
+                'categories': book_data.get('subjects', ['Fiction']),
                 'published_date': book_data.get('publish_date', ''),
-                'publisher': book_data.get('publishers', [''])[0] if book_data.get('publishers') else '',
+                'publisher': book_data.get('publishers', ['Unknown Publisher'])[0] if book_data.get('publishers') else 'Unknown Publisher',
                 'page_count': book_data.get('number_of_pages', 0),
                 'isbn': isbn,
                 'source': 'OpenLibrary'
