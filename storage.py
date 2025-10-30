@@ -70,6 +70,10 @@ def add_favorite_book(genre: str, book_data: Dict[str, Any]) -> bool:
         print(f"Book with ISBN {isbn} already in favorites for {genre}")
         return False
     
+    # Ensure categories is always a list, not None (FIX FOR EMBEDDING ERROR)
+    if book_data.get('categories') is None:
+        book_data['categories'] = ['Unknown']
+    
     # Add the book
     favorites[genre].append(book_data)
     
@@ -88,3 +92,20 @@ def clear_favorites() -> bool:
     except IOError as e:
         print(f"Error clearing favorites: {e}")
         return False
+
+def cleanup_favorites():
+    """Fix any existing favorites that have None categories."""
+    favorites = load_favorites()
+    fixed_count = 0
+    
+    for genre, books in favorites.items():
+        for book in books:
+            if book.get('categories') is None:
+                book['categories'] = ['Unknown']
+                fixed_count += 1
+    
+    if fixed_count > 0:
+        save_favorites(favorites)
+        print(f"Cleaned up {fixed_count} books with None categories")
+    
+    return fixed_count
