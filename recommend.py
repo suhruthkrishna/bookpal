@@ -20,32 +20,32 @@ class BookRecommender:
         self.embedding_dim = 384  # Dimension of the embeddings
     
     def get_book_embedding(self, book_data: Dict[str, Any]) -> np.ndarray:
-    """
-    Generate embedding vector for a book based on its metadata.
-    
-    Why embeddings? They convert text into numerical vectors that capture semantic meaning.
-    Similar books will have similar vectors, allowing us to measure similarity mathematically.
-    
-    Args:
-        book_data: Dictionary containing book information
+        """
+        Generate embedding vector for a book based on its metadata.
         
-    Returns:
-        Normalized embedding vector (numpy array)
-    """
-    # Safely get all text components with proper defaults
+        Why embeddings? They convert text into numerical vectors that capture semantic meaning.
+        Similar books will have similar vectors, allowing us to measure similarity mathematically.
+        
+        Args:
+            book_data: Dictionary containing book information
+            
+        Returns:
+            Normalized embedding vector (numpy array)
+        """
+        # Safely get all text components with proper defaults
         title = book_data.get('title', '')
         authors = book_data.get('authors', [])
         description = book_data.get('description', '')
-    
-    # Safely handle categories - they might be None
+        
+        # Safely handle categories - they might be None
         categories = book_data.get('categories', [])
         if categories is None:
             categories = ['Unknown']
-    
+        
         publisher = book_data.get('publisher', '')
         page_count = str(book_data.get('page_count', ''))
-    
-    # Create a rich text representation of the book
+        
+        # Create a rich text representation of the book
         text_components = [
             title,
             ' '.join(authors) if authors else '',
@@ -54,18 +54,18 @@ class BookRecommender:
             publisher,
             page_count
         ]
-    
-    # Filter out empty components and join
+        
+        # Filter out empty components and join
         book_text = ' '.join([str(comp) for comp in text_components if comp])
-    
-    # Generate embedding
+        
+        # Generate embedding
         embedding = self.model.encode(book_text)
-    
-    # Normalize the embedding (convert to unit vector)
-    # Why normalize? So we can use cosine similarity which measures angle between vectors
-    # Cosine similarity ranges from -1 (opposite) to 1 (identical), with 0 meaning no correlation
+        
+        # Normalize the embedding (convert to unit vector)
+        # Why normalize? So we can use cosine similarity which measures angle between vectors
+        # Cosine similarity ranges from -1 (opposite) to 1 (identical), with 0 meaning no correlation
         normalized_embedding = embedding / np.linalg.norm(embedding)
-    
+        
         return normalized_embedding
     
     def create_genre_profile(self, favorite_books: List[Dict[str, Any]]) -> Optional[np.ndarray]:
@@ -190,5 +190,4 @@ class BookRecommender:
                 prepared_books.append(book_copy)
             prepared_favorites[genre] = prepared_books
         
-
         return prepared_favorites
