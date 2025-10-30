@@ -172,7 +172,9 @@ def show_add_favorites_page():
             st.write(f"**Author(s):** {', '.join(book_data['authors'])}")
             
             # Detect and display genre
-            detected_genre = st.session_state.book_api.detect_genre(book_data['categories'])
+            # Safely get categories with default value
+            categories = book_data.get('categories', [])
+            detected_genre = st.session_state.book_api.detect_genre(categories)
             st.write(f"**Detected Genre:** {detected_genre}")
             
             st.write(f"**Publisher:** {book_data.get('publisher', 'Unknown')}")
@@ -414,4 +416,5 @@ def show_reset_page():
         st.rerun()
 
 if __name__ == "__main__":
+
     main()
