@@ -35,7 +35,7 @@ class BookRecommender:
         # Safely get all text components with proper defaults
         title = book_data.get('title', '')
         authors = book_data.get('authors', [])
-        description = book_data.get('description', '')
+        description = book_data.get('description', 'No description available.')
         
         # Safely handle categories - they might be None
         categories = book_data.get('categories', [])
