@@ -58,6 +58,11 @@ class BookRecommender:
         # Filter out empty components and join
         book_text = ' '.join([str(comp) for comp in text_components if comp])
         
+        # DEBUG: Print what we're analyzing
+        print(f"📚 Analyzing book: {title}")
+        print(f"📖 Description length: {len(description)} characters")
+        print(f"🔍 Full text length: {len(book_text)} characters")
+        
         # Generate embedding
         embedding = self.model.encode(book_text)
         
