@@ -119,14 +119,35 @@ class BookAPI:
                 # Create descriptive text from available info
                 title = book_data.get('title', 'This book')
                 subjects = book_data.get('subjects', [])
-                subject_text = f" about {subjects[0]}" if subjects else ""
+                
+                # Extract subject names if they are dictionaries
+                subject_names = []
+                for subject in subjects:
+                    if isinstance(subject, dict):
+                        subject_names.append(subject.get('name', ''))
+                    else:
+                        subject_names.append(str(subject))
+                
+                subject_text = f" about {subject_names[0]}" if subject_names else ""
                 description = f"{title}{subject_text}. An engaging work that captivates readers with its narrative and characters."
+            
+            # Handle subjects/categories - extract names if they are dictionaries
+            subjects = book_data.get('subjects', [])
+            categories = []
+            for subject in subjects:
+                if isinstance(subject, dict):
+                    categories.append(subject.get('name', 'Unknown'))
+                else:
+                    categories.append(str(subject))
+            
+            if not categories:
+                categories = ['Fiction']
             
             result = {
                 'title': book_data.get('title', 'Unknown Title'),
                 'authors': book_data.get('authors', [{'name': 'Unknown Author'}]),
                 'description': description,
-                'categories': book_data.get('subjects', ['Fiction']),
+                'categories': categories,  # Use processed categories
                 'published_date': book_data.get('publish_date', ''),
                 'publisher': book_data.get('publishers', ['Unknown Publisher'])[0] if book_data.get('publishers') else 'Unknown Publisher',
                 'page_count': book_data.get('number_of_pages', 0),
@@ -182,9 +203,17 @@ class BookAPI:
         if not categories or categories == ['Unknown'] or categories is None:
             return "Fiction"
         
+        # Ensure all categories are strings (handle dictionaries)
+        category_strings = []
+        for cat in categories:
+            if isinstance(cat, dict):
+                category_strings.append(str(cat.get('name', 'Unknown')))
+            else:
+                category_strings.append(str(cat))
+        
         # Ensure categories is a list and convert all elements to strings
         try:
-            categories_text = ' '.join(str(cat) for cat in categories).lower()
+            categories_text = ' '.join(category_strings).lower()
         except (TypeError, AttributeError):
             return "Fiction"
         
