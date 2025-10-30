@@ -54,11 +54,16 @@ class BookAPI:
             # Get the first result
             book_info = data['items'][0]['volumeInfo']
             
+            # Get description - try multiple fields for better content
+            description = book_info.get('description', 'No description available.')
+            if not description or description == 'No description available.':
+                description = book_info.get('subtitle', 'No description available.')
+            
             # Extract relevant information
             result = {
                 'title': book_info.get('title', 'Unknown Title'),
                 'authors': book_info.get('authors', ['Unknown Author']),
-                'description': book_info.get('description', 'No description available.'),
+                'description': description,
                 'categories': book_info.get('categories', ['Unknown']),
                 'published_date': book_info.get('publishedDate', ''),
                 'publisher': book_info.get('publisher', ''),
