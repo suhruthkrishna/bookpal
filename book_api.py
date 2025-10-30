@@ -144,49 +144,50 @@ class BookAPI:
             book_data = self.fetch_from_openlibrary(cleaned_isbn)
         
         return book_data
+
     def detect_genre(self, categories: list) -> str:
-    """
-    Detect the primary genre from book categories.
-    
-    Args:
-        categories: List of category strings from API
+        """
+        Detect the primary genre from book categories.
         
-    Returns:
-        Detected genre string
-    """
-    # Handle None, empty list, or ['Unknown'] cases
-    if not categories or categories == ['Unknown'] or categories is None:
-        return "Fiction"
-    
-    # Ensure categories is a list and convert all elements to strings
-    try:
-        categories_text = ' '.join(str(cat) for cat in categories).lower()
-    except (TypeError, AttributeError):
-        return "Fiction"
-    
-    # Common genre mappings
-    genre_keywords = {
-        'Fantasy': ['fantasy', 'magic', 'epic', 'sword', 'dragon', 'wizard', 'middle-earth', 'thrones', 'westeros', 'mythical'],
-        'Science Fiction': ['science fiction', 'sci-fi', 'space', 'future', 'dystopian', 'cyberpunk', 'alien', 'galaxy'],
-        'Mystery': ['mystery', 'crime', 'detective', 'thriller', 'suspense', 'murder', 'investigation'],
-        'Romance': ['romance', 'love', 'relationship', 'contemporary romance', 'historical romance'],
-        'Horror': ['horror', 'ghost', 'supernatural', 'terror', 'haunted', 'zombie', 'vampire'],
-        'Biography': ['biography', 'memoir', 'autobiography', 'life story'],
-        'History': ['history', 'historical', 'ancient', 'medieval', 'world war'],
-        'Science': ['science', 'technology', 'physics', 'biology', 'chemistry', 'mathematics'],
-        'Self-Help': ['self-help', 'personal development', 'motivational', 'psychology'],
-        'Young Adult': ['young adult', 'ya', 'teen', 'adolescent', 'coming of age'],
-        'Classic': ['classic', 'literature', 'classic literature']
-    }
-    
-    # Find the best matching genre
-    best_match = "Fiction"  # Default
-    max_matches = 0
-    
-    for genre, keywords in genre_keywords.items():
-        matches = sum(1 for keyword in keywords if keyword in categories_text)
-        if matches > max_matches:
-            max_matches = matches
-            best_match = genre
-    
-    return best_match
+        Args:
+            categories: List of category strings from API
+            
+        Returns:
+            Detected genre string
+        """
+        # Handle None, empty list, or ['Unknown'] cases
+        if not categories or categories == ['Unknown'] or categories is None:
+            return "Fiction"
+        
+        # Ensure categories is a list and convert all elements to strings
+        try:
+            categories_text = ' '.join(str(cat) for cat in categories).lower()
+        except (TypeError, AttributeError):
+            return "Fiction"
+        
+        # Common genre mappings
+        genre_keywords = {
+            'Fantasy': ['fantasy', 'magic', 'epic', 'sword', 'dragon', 'wizard', 'middle-earth', 'thrones', 'westeros', 'mythical'],
+            'Science Fiction': ['science fiction', 'sci-fi', 'space', 'future', 'dystopian', 'cyberpunk', 'alien', 'galaxy'],
+            'Mystery': ['mystery', 'crime', 'detective', 'thriller', 'suspense', 'murder', 'investigation'],
+            'Romance': ['romance', 'love', 'relationship', 'contemporary romance', 'historical romance'],
+            'Horror': ['horror', 'ghost', 'supernatural', 'terror', 'haunted', 'zombie', 'vampire'],
+            'Biography': ['biography', 'memoir', 'autobiography', 'life story'],
+            'History': ['history', 'historical', 'ancient', 'medieval', 'world war'],
+            'Science': ['science', 'technology', 'physics', 'biology', 'chemistry', 'mathematics'],
+            'Self-Help': ['self-help', 'personal development', 'motivational', 'psychology'],
+            'Young Adult': ['young adult', 'ya', 'teen', 'adolescent', 'coming of age'],
+            'Classic': ['classic', 'literature', 'classic literature']
+        }
+        
+        # Find the best matching genre
+        best_match = "Fiction"  # Default
+        max_matches = 0
+        
+        for genre, keywords in genre_keywords.items():
+            matches = sum(1 for keyword in keywords if keyword in categories_text)
+            if matches > max_matches:
+                max_matches = matches
+                best_match = genre
+        
+        return best_match
